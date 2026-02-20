@@ -1,0 +1,26 @@
+services:
+  task-service:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=${TASK_MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URI=${USER_MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - task-service
+      - user-service
